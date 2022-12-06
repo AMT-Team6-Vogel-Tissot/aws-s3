@@ -12,16 +12,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class AppController {
 
     @GetMapping("/creationBucket")
-    public void createBucket(@RequestParam String name) {
-
+    public boolean createBucket(@RequestParam String name) {
+        return true;
     }
     @GetMapping("/demandeObjet")
-    public void urlObject(@RequestParam String name) {
-
+    public String urlObject(@RequestParam String name) {
+        return "";
     }
+    //TODO retourner url si object créé
     @PostMapping("/ajoutObjet")
-    public void createObject(@RequestBody AppRequest request) {
-
+    public String createObject(@RequestBody AppRequest request) {
+        return "";
     }
 
 }
