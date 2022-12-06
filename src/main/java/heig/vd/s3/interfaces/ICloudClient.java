@@ -1,6 +1,6 @@
 package heig.vd.s3.interfaces;
 
-import HEIG.vd.AwsCloudClient;
+import heig.vd.s3.AwsCloudClient;
 
 public interface ICloudClient {
     static AwsCloudClient getInstance() {
