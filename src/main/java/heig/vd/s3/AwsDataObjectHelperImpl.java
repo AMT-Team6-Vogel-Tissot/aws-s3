@@ -1,7 +1,7 @@
-package HEIG.vd;
+package heig.vd.s3;
 
-import HEIG.vd.interfaces.IDataObjectHelper;
-import HEIG.vd.utils.GetEnvVal;
+import heig.vd.s3.interfaces.IDataObjectHelper;
+import heig.vd.s3.utils.GetEnvVal;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;

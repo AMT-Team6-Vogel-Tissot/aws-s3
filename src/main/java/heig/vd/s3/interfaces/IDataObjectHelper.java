@@ -1,4 +1,4 @@
-package HEIG.vd.interfaces;
+package heig.vd.s3.interfaces;
 
 import java.net.URL;
 

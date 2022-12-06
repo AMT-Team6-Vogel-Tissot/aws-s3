@@ -1,6 +1,7 @@
-package HEIG.vd;
+package heig.vd.s3;
 
-import HEIG.vd.interfaces.ICloudClient;
+
+import heig.vd.s3.interfaces.ICloudClient;
 
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
 import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
@@ -8,12 +9,11 @@ import software.amazon.awssdk.regions.Region;
 
 import java.util.Objects;
 
-import HEIG.vd.utils.GetEnvVal;
+import heig.vd.s3.utils.GetEnvVal;
 
 public class AwsCloudClient implements ICloudClient {
 
     private final AwsDataObjectHelperImpl dataObject;
-    private final AwsLabelDetectorHelperImpl labelDetector;
 
     private static AwsCloudClient INSTANCIED = null;
 
@@ -29,7 +29,6 @@ public class AwsCloudClient implements ICloudClient {
 
         bucketUrl = GetEnvVal.getEnvVal("BUCKET");
         dataObject = new AwsDataObjectHelperImpl(credentialsProvider, region);
-        labelDetector = new AwsLabelDetectorHelperImpl(credentialsProvider, region);
     }
 
     public static AwsCloudClient getInstance() {
@@ -43,9 +42,6 @@ public class AwsCloudClient implements ICloudClient {
         return dataObject;
     }
 
-    public AwsLabelDetectorHelperImpl getLabelDetector() {
-        return labelDetector;
-    }
 
     public String getBucketUrl(){
         return bucketUrl;
