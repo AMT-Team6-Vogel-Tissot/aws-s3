@@ -1,45 +1,27 @@
-package heig.vd.s3;
+package heig.vd.s3.service;
 
-import heig.vd.s3.interfaces.IDataObjectHelper;
+import heig.vd.s3.repository.S3Repository;
 import heig.vd.s3.utils.GetEnvVal;
-import software.amazon.awssdk.auth.credentials.StaticCredentialsProvider;
+import org.springframework.stereotype.Service;
 import software.amazon.awssdk.core.ResponseBytes;
 import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.regions.Region;
-import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.*;
-import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.GetObjectPresignRequest;
-import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequest;
 
+import java.io.FileNotFoundException;
 import java.net.URL;
 import java.time.Duration;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+@Service
+public class S3Service {
 
-public class AwsDataObjectHelperImpl implements IDataObjectHelper {
-    private final S3Presigner presigner;
-    private final S3Client cloudClient;
+    private final S3Repository repository;
 
-    private final String nameBucket;
-
-    public AwsDataObjectHelperImpl(StaticCredentialsProvider credentialsProvider, Region region) {
-
-        cloudClient = S3Client
-                .builder()
-                .credentialsProvider(credentialsProvider)
-                .region(region)
-                .build();
-
-        presigner = S3Presigner
-                .builder()
-                .credentialsProvider(credentialsProvider)
-                .region(region)
-                .build();
-
-        nameBucket = GetEnvVal.getEnvVal("BUCKET");
+    public S3Service() {
+        repository = new S3Repository();
     }
 
     public boolean exist() {
@@ -54,32 +36,26 @@ public class AwsDataObjectHelperImpl implements IDataObjectHelper {
         return listObjects();
     }
 
-    @Override
     public void create(String objectName, byte[] contentFile) {
         createObject(objectName, contentFile);
     }
 
-    @Override
     public byte[] get(String objectName) {
         return getObject(objectName);
     }
 
-    @Override
     public void delete(String objectName) {
         removeObject(objectName);
     }
 
-    @Override
-    public URL publish(String objectName) {
+    public URL publish(String objectName) throws FileNotFoundException {
         return publishURL(objectName);
     }
 
-    @Override
     public void update(String objectName, byte[] contentFile) {
         updateObject(objectName, contentFile);
     }
 
-    @Override
     public void update(String objectName, byte[] contentFile, String newImageName) {
         updateObject(objectName, contentFile, newImageName);
     }
@@ -87,13 +63,14 @@ public class AwsDataObjectHelperImpl implements IDataObjectHelper {
     private boolean existBucket() {
         HeadBucketRequest hbReq = HeadBucketRequest
                 .builder()
-                .bucket(nameBucket)
+                .bucket(repository.getBucket())
                 .build();
+
         try{
-            cloudClient.headBucket(hbReq);
+            repository.exist(hbReq);
             return true;
         }catch (S3Exception e) {
-            Logger.getLogger(AwsDataObjectHelperImpl.class.getName()).log(Level.WARNING, e.getMessage());
+            Logger.getLogger(S3Service.class.getName()).log(Level.WARNING, e.getMessage());
             return false;
         }
     }
@@ -101,15 +78,15 @@ public class AwsDataObjectHelperImpl implements IDataObjectHelper {
     private boolean existObject(String nameObject) {
         GetObjectRequest goReq = GetObjectRequest
                 .builder()
-                .bucket(nameBucket)
+                .bucket(repository.getBucket())
                 .key(nameObject)
                 .build();
 
         try {
-            cloudClient.getObject(goReq);
+            repository.exist(goReq);
             return true;
         } catch (S3Exception e) {
-            Logger.getLogger(AwsDataObjectHelperImpl.class.getName()).log(Level.WARNING, e.getMessage());
+            Logger.getLogger(S3Service.class.getName()).log(Level.WARNING, e.getMessage());
             return false;
         }
     }
@@ -118,7 +95,7 @@ public class AwsDataObjectHelperImpl implements IDataObjectHelper {
         StringBuilder str = new StringBuilder();
 
         ListBucketsRequest listBucketsRequest = ListBucketsRequest.builder().build();
-        ListBucketsResponse listBucketsResponse = cloudClient.listBuckets(listBucketsRequest);
+        ListBucketsResponse listBucketsResponse = repository.list(listBucketsRequest);
 
         for (Bucket b : listBucketsResponse.buckets()) {
             str.append(b.name()).append("\n");
@@ -134,10 +111,10 @@ public class AwsDataObjectHelperImpl implements IDataObjectHelper {
         try {
             ListObjectsRequest listObjects = ListObjectsRequest
                     .builder()
-                    .bucket(nameBucket)
+                    .bucket(repository.getBucket())
                     .build();
 
-            ListObjectsResponse res = cloudClient.listObjects(listObjects);
+            ListObjectsResponse res = repository.list(listObjects);
 
             List<S3Object> objects = res.contents();
             for (S3Object myValue : objects) {
@@ -145,7 +122,6 @@ public class AwsDataObjectHelperImpl implements IDataObjectHelper {
             }
         } catch (S3Exception e) {
             System.err.println(e.awsErrorDetails().errorMessage());
-            System.exit(1);
         }
 
         return str.toString();
@@ -158,47 +134,47 @@ public class AwsDataObjectHelperImpl implements IDataObjectHelper {
 
                 PutObjectRequest poReq = PutObjectRequest
                         .builder()
-                        .bucket(nameBucket)
+                        .bucket(repository.getBucket())
                         .key(objectName)
                         .build();
 
-                cloudClient.putObject(poReq, RequestBody.fromBytes(contentFile));
+                repository.create(poReq, contentFile);
 
             } catch (S3Exception e) {
                 System.err.println(e.awsErrorDetails().errorMessage());
-                System.exit(1);
             }
 
         }
 
     }
 
-    private URL publishURL(String objectName) {
+    private URL publishURL(String name) throws FileNotFoundException {
+        if(exist(name)){
+            GetObjectRequest goReq = GetObjectRequest
+                    .builder()
+                    .bucket(repository.getBucket())
+                    .key(name)
+                    .build();
 
-        GetObjectRequest goReq = GetObjectRequest
-                .builder()
-                .bucket(nameBucket)
-                .key(objectName)
-                .build();
+            GetObjectPresignRequest goPreReq = GetObjectPresignRequest
+                    .builder()
+                    .signatureDuration(Duration.ofMinutes(Long.parseLong(GetEnvVal.getEnvVal("URL_DURATION"))))
+                    .getObjectRequest(goReq)
+                    .build();
 
-        GetObjectPresignRequest goPreReq = GetObjectPresignRequest
-                .builder()
-                .signatureDuration(Duration.ofMinutes(Long.parseLong(GetEnvVal.getEnvVal("URL_DURATION"))))
-                .getObjectRequest(goReq)
-                .build();
-
-        PresignedGetObjectRequest presignedRequest = presigner.presignGetObject(goPreReq);
-
-        return presignedRequest.url();
+            return repository.getURLObject(goPreReq);
+        }else {
+            throw new FileNotFoundException();
+        }
     }
 
     private void removeObject(String objectName) {
         DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
-                .bucket(nameBucket)
+                .bucket(repository.getBucket())
                 .key(objectName)
                 .build();
 
-        cloudClient.deleteObject(deleteObjectRequest);
+        repository.delete(deleteObjectRequest);
     }
 
     private void updateObject(String objectName, byte[] contentFile) {
@@ -223,11 +199,11 @@ public class AwsDataObjectHelperImpl implements IDataObjectHelper {
 
         if(exist() && existObject(objectName)) {
             GetObjectRequest getObjectRequest = GetObjectRequest.builder()
-                    .bucket(nameBucket)
+                    .bucket(repository.getBucket())
                     .key(objectName)
                     .build();
 
-            ResponseBytes<GetObjectResponse> objectBytes = cloudClient.getObjectAsBytes(getObjectRequest);
+            ResponseBytes<GetObjectResponse> objectBytes = repository.getObjectAsBytes(getObjectRequest);
 
             data = objectBytes.asByteArray();
         }

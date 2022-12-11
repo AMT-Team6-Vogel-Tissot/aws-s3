@@ -2,6 +2,7 @@ package heig.vd.s3;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import heig.vd.s3.service.S3Service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
@@ -12,8 +13,7 @@ import java.nio.file.Path;
 
 public class AwsDataObjectHelperImplTest {
 
-    private final AwsCloudClient bucketManager = AwsCloudClient.getInstance();
-    private final AwsDataObjectHelperImpl dataObjectHelper = bucketManager.getDataObject();
+    private final S3Service s3Service = new S3Service();
     private final String pathToTestFolder = "./filesTest/";
     private final String image1 = "file1.jpg";
     private final String image2 = "file2.jpg";
@@ -26,17 +26,17 @@ public class AwsDataObjectHelperImplTest {
 
     @AfterEach
     public void cleanUpEach(){
-        if(this.dataObjectHelper.exist(this.image1)){
-            this.dataObjectHelper.delete(this.image1);
+        if(this.s3Service.exist(this.image1)){
+            this.s3Service.delete(this.image1);
         }
-        if(this.dataObjectHelper.exist(this.image2)){
-            this.dataObjectHelper.delete(this.image2);
+        if(this.s3Service.exist(this.image2)){
+            this.s3Service.delete(this.image2);
         }
-        if(this.dataObjectHelper.exist(this.newImageName)){
-            this.dataObjectHelper.delete(this.newImageName);
+        if(this.s3Service.exist(this.newImageName)){
+            this.s3Service.delete(this.newImageName);
         }
-        if(this.dataObjectHelper.exist(this.fileText)){
-            this.dataObjectHelper.delete(this.fileText);
+        if(this.s3Service.exist(this.fileText)){
+            this.s3Service.delete(this.fileText);
         }
     }
 
@@ -68,23 +68,24 @@ public class AwsDataObjectHelperImplTest {
         String actualResult;
 
         // when
-        actualResult = dataObjectHelper.list();
+        actualResult = this.s3Service.list();
 
         // then
         assertEquals(listBuckets, actualResult);
     }
 
+    @Disabled
     @Test
     public void List_ListAllObjects_Success() throws IOException {
         // given
         String listObjects = "file1.jpg\n" + "file2.jpg\n";
 
-        this.dataObjectHelper.create(this.image1, Files.readAllBytes(this.path1));
-        this.dataObjectHelper.create(this.image2, Files.readAllBytes(this.path2));
+        this.s3Service.create(this.image1, Files.readAllBytes(this.path1));
+        this.s3Service.create(this.image2, Files.readAllBytes(this.path2));
         String actualResult;
 
         // when
-        actualResult = this.dataObjectHelper.list();
+        actualResult = this.s3Service.list();
 
         // then
         assertEquals(listObjects, actualResult);
@@ -96,7 +97,7 @@ public class AwsDataObjectHelperImplTest {
         boolean actualResult;
 
         // when
-        actualResult = this.dataObjectHelper.exist();
+        actualResult = this.s3Service.exist();
 
         // then
         assertTrue(actualResult);
@@ -105,25 +106,25 @@ public class AwsDataObjectHelperImplTest {
     @Test
     public void Exist_ObjectIsPresent_Success() throws IOException {
         // given
-        this.dataObjectHelper.create(this.image1, Files.readAllBytes(this.path1));
+        this.s3Service.create(this.image1, Files.readAllBytes(this.path1));
         boolean actualResult;
 
         // when
-        actualResult = this.dataObjectHelper.exist(this.image1);
+        actualResult = this.s3Service.exist(this.image1);
 
         // then
-        this.dataObjectHelper.delete(this.image1);
+        this.s3Service.delete(this.image1);
         assertTrue(actualResult);
     }
 
     @Test
     public void Exist_ObjectIsNotPresent_Success() {
         // given
-        assertTrue(this.dataObjectHelper.exist());
+        assertTrue(this.s3Service.exist());
         boolean actualResult;
 
         // when
-        actualResult = this.dataObjectHelper.exist(this.image1);
+        actualResult = this.s3Service.exist(this.image1);
 
         // then
         assertFalse(actualResult);
@@ -132,90 +133,90 @@ public class AwsDataObjectHelperImplTest {
     @Test
     public void Create_CreateObjectWithExistingBucket_Success() throws IOException {
         // given
-        assertTrue(this.dataObjectHelper.exist());
-        assertFalse(this.dataObjectHelper.exist(this.image1));
+        assertTrue(this.s3Service.exist());
+        assertFalse(this.s3Service.exist(this.image1));
 
         // when
-        this.dataObjectHelper.create(this.image1, Files.readAllBytes(this.path1));
+        this.s3Service.create(this.image1, Files.readAllBytes(this.path1));
 
         // then
-        assertTrue(this.dataObjectHelper.exist(this.image1));
+        assertTrue(this.s3Service.exist(this.image1));
     }
 
     @Test
     public void Delete_RemoveNotExistingObject_Success() {
         // given
-        assertTrue(this.dataObjectHelper.exist());
+        assertTrue(this.s3Service.exist());
 
         // when
-        this.dataObjectHelper.delete(this.image1);
+        this.s3Service.delete(this.image1);
 
         // then
-        assertFalse(this.dataObjectHelper.exist(this.image1));
+        assertFalse(this.s3Service.exist(this.image1));
     }
 
     @Test
     public void Delete_NotEmptyBucket_Success() throws IOException {
         // given
-        this.dataObjectHelper.create(this.image1, Files.readAllBytes(this.path1));
+        this.s3Service.create(this.image1, Files.readAllBytes(this.path1));
 
-        assertTrue(this.dataObjectHelper.exist());
-        assertTrue(this.dataObjectHelper.exist(this.image1));
+        assertTrue(this.s3Service.exist());
+        assertTrue(this.s3Service.exist(this.image1));
 
         // when
-        this.dataObjectHelper.delete(this.image1);
+        this.s3Service.delete(this.image1);
 
         // then
-        assertFalse(this.dataObjectHelper.exist(this.image1));
+        assertFalse(this.s3Service.exist(this.image1));
     }
 
     @Test
     public void Update_UpdateExistingObjectContent_Success() throws IOException {
         // given
-        assertTrue(this.dataObjectHelper.exist());
+        assertTrue(this.s3Service.exist());
         String exceptedValue = "Test file";
 
-        this.dataObjectHelper.create(this.image1, Files.readAllBytes(this.path1));
-        assertTrue(this.dataObjectHelper.exist(this.image1));
+        this.s3Service.create(this.image1, Files.readAllBytes(this.path1));
+        assertTrue(this.s3Service.exist(this.image1));
 
         // when
-        this.dataObjectHelper.update(this.image1, Files.readAllBytes(this.path3));
-        String value = new String(this.dataObjectHelper.get(this.image1));
+        this.s3Service.update(this.image1, Files.readAllBytes(this.path3));
+        String value = new String(this.s3Service.get(this.image1));
 
         // then
-        assertTrue(this.dataObjectHelper.exist(this.image1));
+        assertTrue(this.s3Service.exist(this.image1));
         assertEquals(exceptedValue, value);
     }
 
     @Test
     public void Update_UpdateExistingObjectNameAndContent_Success() throws IOException {
         // given
-        assertTrue(this.dataObjectHelper.exist());
+        assertTrue(this.s3Service.exist());
         String exceptedValue = "Test file";
 
-        this.dataObjectHelper.create(this.image1, Files.readAllBytes(this.path1));
-        assertTrue(this.dataObjectHelper.exist(this.image1));
+        this.s3Service.create(this.image1, Files.readAllBytes(this.path1));
+        assertTrue(this.s3Service.exist(this.image1));
 
         // when
-        this.dataObjectHelper.update(this.image1, Files.readAllBytes(this.path3), this.newImageName);
-        String value = new String(this.dataObjectHelper.get(this.newImageName));
+        this.s3Service.update(this.image1, Files.readAllBytes(this.path3), this.newImageName);
+        String value = new String(this.s3Service.get(this.newImageName));
 
         // then
-        assertFalse(this.dataObjectHelper.exist(this.image1));
-        assertTrue(this.dataObjectHelper.exist(this.newImageName));
+        assertFalse(this.s3Service.exist(this.image1));
+        assertTrue(this.s3Service.exist(this.newImageName));
         assertEquals(exceptedValue, value);
     }
 
     @Test
     public void Get_GetExistingObject_Success() throws IOException {
         // given
-        assertTrue(this.dataObjectHelper.exist());
-        this.dataObjectHelper.create(this.fileText, Files.readAllBytes(this.path3));
-        assertTrue(this.dataObjectHelper.exist(this.fileText));
+        assertTrue(this.s3Service.exist());
+        this.s3Service.create(this.fileText, Files.readAllBytes(this.path3));
+        assertTrue(this.s3Service.exist(this.fileText));
         String exceptedValue = "Test file";
 
         // when
-        String value = new String(this.dataObjectHelper.get(this.fileText));
+        String value = new String(this.s3Service.get(this.fileText));
 
         // then
         assertEquals(exceptedValue, value);
@@ -224,10 +225,10 @@ public class AwsDataObjectHelperImplTest {
     @Test
     public void Get_GetNotExistingObject_Success() {
         // given
-        assertTrue(this.dataObjectHelper.exist());
+        assertTrue(this.s3Service.exist());
 
         // when
-        byte[] value = this.dataObjectHelper.get(this.fileText);
+        byte[] value = this.s3Service.get(this.fileText);
 
         // then
         assertNull(value);
