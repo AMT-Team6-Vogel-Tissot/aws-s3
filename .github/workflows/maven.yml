@@ -1,0 +1,55 @@
+name: maven build & test
+on:
+  push:
+    branches:
+      - '**'
+
+
+jobs:
+  build:
+    environment: AWS
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      BUCKET: ${{ secrets.BUCKET }}
+      URL_DURATION: ${{ secrets.URL_DURATION }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: maven
+      - name: Build
+        run: mvn package
+  test:
+    environment: AWS
+    env:
+      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
+      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
+      REGION: ${{ secrets.AWS_DEFAULT_REGION }}
+      BUCKET: ${{ secrets.BUCKET }}
+      URL_DURATION: ${{ secrets.URL_DURATION }}
+    runs-on: ubuntu-latest
+    steps:
+      #clone the repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      - name: Configure AWS Credentials
+        uses: aws-actions/configure-aws-credentials@v1
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ${{ secrets.AWS_DEFAULT_REGION }}
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'corretto'
+          cache: maven
+      - name: Test
+        run: mvn --batch-mode clean test
