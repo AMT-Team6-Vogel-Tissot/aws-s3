@@ -1,5 +1,6 @@
 package heig.vd.s3.service;
 
+import heig.vd.s3.interfaces.IDataObjectHelper;
 import heig.vd.s3.exception.BucketDoesntExistException;
 import heig.vd.s3.exception.ObjectAlreadyExistException;
 import heig.vd.s3.exception.ObjectNotFoundException;
@@ -17,7 +18,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 @Service
-public class S3Service {
+public class S3Service implements IDataObjectHelper {
 
     private final S3Repository repository;
     private final String bucketName;
@@ -27,38 +28,39 @@ public class S3Service {
         bucketName = repository.getBucket();
     }
 
+    @Override
     public boolean exist() {
         return existBucket();
     }
-
+    @Override
     public boolean exist(String objectName) {
         return existObject(objectName);
     }
-
+    @Override
     public String list() {
         return listObjects();
     }
-
+    @Override
     public void create(String objectName, byte[] contentFile){
         createObject(objectName, contentFile);
     }
-
+    @Override
     public byte[] get(String objectName) {
         return getObject(objectName);
     }
-
+    @Override
     public void delete(String objectName) {
         removeObject(objectName);
     }
-
+    @Override
     public URL publish(String objectName) {
         return publishURL(objectName);
     }
-
+    @Override
     public void update(String objectName, byte[] contentFile){
         updateObject(objectName, contentFile);
     }
-
+    @Override
     public void update(String objectName, byte[] contentFile, String newImageName){
         updateObject(objectName, contentFile, newImageName);
     }
