@@ -8,7 +8,6 @@ import heig.vd.s3.service.S3Service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
-import org.junit.jupiter.api.TestTemplate;
 
 import java.io.IOException;
 import java.net.HttpURLConnection;
