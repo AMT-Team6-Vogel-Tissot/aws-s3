@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "1cabc4bf-f339-4169-ae3c-e231edac3df4",
+		"_postman_id": "ab1911e3-f4e4-4a2e-94df-47585fd9a642",
 		"name": "S3_API_CALLS",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -36,8 +36,14 @@
 				"method": "POST",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": "[\r\n    {\r\n        \"objectName\" : \"fileTest2\",\r\n        \"contentFile\" : \"\"\r\n    }\r\n]",
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/C:/AMT/Labos/aws-s3/filesTest/file1.jpg"
+						}
+					],
 					"options": {
 						"raw": {
 							"language": "json"
@@ -45,13 +51,19 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/objet",
+					"raw": "localhost:8080/objet?objectName=testFile2",
 					"host": [
 						"localhost"
 					],
 					"port": "8080",
 					"path": [
 						"objet"
+					],
+					"query": [
+						{
+							"key": "objectName",
+							"value": "testFile2"
+						}
 					]
 				}
 			},

@@ -1,5 +1,7 @@
 package heig.vd.s3.service;
 
+import heig.vd.s3.exception.BucketDoesntExistException;
+import heig.vd.s3.exception.ObjectAlreadyExistException;
 import heig.vd.s3.exception.ObjectNotFoundException;
 import heig.vd.s3.repository.S3Repository;
 import heig.vd.s3.utils.GetEnvVal;
@@ -111,6 +113,10 @@ public class S3Service {
 
     private String listObjects() {
 
+        if(!exist()) {
+            throw new BucketDoesntExistException(getBucketName());
+        }
+
         StringBuilder str = new StringBuilder();
 
         try {
@@ -134,6 +140,14 @@ public class S3Service {
 
     private void createObject(String objectName, byte[] contentFile) {
 
+        if(!exist()) {
+            throw new BucketDoesntExistException(getBucketName());
+        }
+
+        if(exist(objectName)) {
+            throw new ObjectNotFoundException(objectName);
+        }
+
         try{
 
             PutObjectRequest poReq = PutObjectRequest
@@ -151,6 +165,14 @@ public class S3Service {
     }
 
     private URL publishURL(String name) {
+
+        if(!exist()) {
+            throw new BucketDoesntExistException(getBucketName());
+        }
+
+        if(!exist(name)) {
+            throw new ObjectNotFoundException(name);
+        }
 
         URL url;
         try {
@@ -176,6 +198,15 @@ public class S3Service {
     }
 
     private void removeObject(String objectName) {
+
+        if(!exist()) {
+            throw new BucketDoesntExistException(getBucketName());
+        }
+
+        if(!exist(objectName)) {
+            throw new ObjectNotFoundException(objectName);
+        }
+
         try{
             DeleteObjectRequest deleteObjectRequest = DeleteObjectRequest.builder()
                     .bucket(bucketName)
@@ -189,16 +220,47 @@ public class S3Service {
     }
 
     private void updateObject(String objectName, byte[] contentFile){
+
+        if(!exist()) {
+            throw new BucketDoesntExistException(getBucketName());
+        }
+
+        if(!exist(objectName)) {
+            throw new ObjectNotFoundException(objectName);
+        }
+
         removeObject(objectName);
         createObject(objectName, contentFile);
     }
 
     private void updateObject(String objectName, byte[] contentFile, String newObjectName){
+
+        if(!exist()) {
+            throw new BucketDoesntExistException(getBucketName());
+        }
+
+        if(!exist(objectName)) {
+            throw new ObjectNotFoundException(objectName);
+        }
+
+        if(!exist(objectName)){
+            throw new ObjectAlreadyExistException(newObjectName);
+        }
+
         removeObject(objectName);
         createObject(newObjectName, contentFile);
     }
 
     private byte[] getObject(String objectName) {
+
+        if(!exist()) {
+            throw new BucketDoesntExistException(getBucketName());
+        }
+
+        if(!exist(objectName)) {
+            throw new ObjectNotFoundException(objectName);
+        }
+
         byte[] data;
 
         try{

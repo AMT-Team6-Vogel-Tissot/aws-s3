@@ -150,10 +150,8 @@ public class AwsDataObjectHelperImplTest {
         assertTrue(this.s3Service.exist());
 
         // when
-        this.s3Service.delete(this.image1);
-
+        assertThrows(ObjectNotFoundException.class, () -> this.s3Service.delete(this.image1));
         // then
-        assertFalse(this.s3Service.exist(this.image1));
     }
 
     @Test

@@ -12,5 +12,5 @@ public class AppRequest {
     @NotBlank
     private String objectName;
     @NotBlank
-    private String contentFile;
+    private byte[] contentFile;
 }
