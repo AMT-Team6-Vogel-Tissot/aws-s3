@@ -2,6 +2,7 @@ package heig.vd.s3;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import heig.vd.s3.exception.ObjectNotFoundException;
 import heig.vd.s3.service.S3Service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
@@ -223,15 +224,12 @@ public class AwsDataObjectHelperImplTest {
     }
 
     @Test
-    public void Get_GetNotExistingObject_Success() {
+    public void Get_GetNotExistingObject_Failure() {
         // given
         assertTrue(this.s3Service.exist());
 
         // when
-        byte[] value = this.s3Service.get(this.fileText);
-
-        // then
-        assertNull(value);
+        assertThrows(ObjectNotFoundException.class, () -> this.s3Service.get(this.fileText));
     }
 
 }

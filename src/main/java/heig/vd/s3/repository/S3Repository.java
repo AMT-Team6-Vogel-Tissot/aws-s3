@@ -22,7 +22,6 @@ public class S3Repository {
 
     private final S3Presigner presigner;
     private final S3Client cloudClient;
-
     private final String bucket;
 
     public S3Repository() {

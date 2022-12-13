@@ -8,9 +8,10 @@ import lombok.experimental.Accessors;
 @Getter
 @NoArgsConstructor
 @Accessors(chain=true)
-public class AppRequest {
+public class UpdateAppRequest {
     @NotBlank
     private String objectName;
     @NotBlank
     private String contentFile;
+    private String newObjectName;
 }
