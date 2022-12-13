@@ -2,13 +2,17 @@ package heig.vd.s3;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+import heig.vd.s3.exception.ObjectAlreadyExistException;
 import heig.vd.s3.exception.ObjectNotFoundException;
 import heig.vd.s3.service.S3Service;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.TestTemplate;
 
 import java.io.IOException;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
@@ -119,7 +123,7 @@ public class AwsDataObjectHelperImplTest {
     }
 
     @Test
-    public void Exist_ObjectIsNotPresent_Success() {
+    public void Exist_ObjectIsNotPresent_Failure() {
         // given
         assertTrue(this.s3Service.exist());
         boolean actualResult;
@@ -145,17 +149,31 @@ public class AwsDataObjectHelperImplTest {
     }
 
     @Test
-    public void Delete_RemoveNotExistingObject_Success() {
+    public void Create_CreateObjectWithExistingObject_Failure() throws IOException {
+        // given
+        assertTrue(this.s3Service.exist());
+        assertFalse(this.s3Service.exist(this.image1));
+        this.s3Service.create(this.image1, Files.readAllBytes(this.path1));
+
+        // when
+
+        // then
+        assertThrows(ObjectAlreadyExistException.class, () -> this.s3Service.create(this.image1, Files.readAllBytes(this.path1)));
+    }
+
+    @Test
+    public void Delete_RemoveNotExistingObject_Failure() {
         // given
         assertTrue(this.s3Service.exist());
 
         // when
-        assertThrows(ObjectNotFoundException.class, () -> this.s3Service.delete(this.image1));
+
         // then
+        assertThrows(ObjectNotFoundException.class, () -> this.s3Service.delete(this.image1));
     }
 
     @Test
-    public void Delete_NotEmptyBucket_Success() throws IOException {
+    public void Delete_ExistingObject_Success() throws IOException {
         // given
         this.s3Service.create(this.image1, Files.readAllBytes(this.path1));
 
@@ -228,6 +246,38 @@ public class AwsDataObjectHelperImplTest {
 
         // when
         assertThrows(ObjectNotFoundException.class, () -> this.s3Service.get(this.fileText));
+    }
+
+    @Test
+    public void Publish_ObjectExists_Success() throws IOException {
+        // given
+        assertTrue(this.s3Service.exist());
+        this.s3Service.create(this.image1, Files.readAllBytes(this.path2));
+        assertTrue(this.s3Service.exist(this.image1));
+
+        URL url;
+        HttpURLConnection con;
+        int responseCode;
+        int responseCodeExcepted = 200;
+
+        // when
+        url = this.s3Service.publish(this.image1);
+        con = (HttpURLConnection) url.openConnection();
+        responseCode = con.getResponseCode();
+
+        // then
+        assertEquals(responseCodeExcepted, responseCode);
+    }
+
+    @Test
+    public void Publish_ObjectDoesntExists_Failure() {
+        // given
+        assertTrue(this.s3Service.exist());
+
+        // when
+
+        // then
+        assertThrows(ObjectNotFoundException.class, () -> this.s3Service.publish(this.image1));
     }
 
 }
