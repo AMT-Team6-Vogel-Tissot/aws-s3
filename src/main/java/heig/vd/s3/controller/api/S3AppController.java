@@ -1,6 +1,6 @@
 package heig.vd.s3.controller.api;
 
-import heig.vd.s3.exception.FileException;
+import heig.vd.s3.exception.FileUploadException;
 import heig.vd.s3.service.S3Service;
 import jakarta.validation.constraints.NotBlank;
 import org.springframework.http.HttpStatus;
@@ -68,7 +68,7 @@ public class S3AppController {
         try{
             content = file.getBytes();
         } catch (IOException e) {
-            throw new FileException(objectName);
+            throw new FileUploadException(objectName);
         }
 
         if(objectNewName.isBlank()){
@@ -87,7 +87,7 @@ public class S3AppController {
         try{
            content = file.getBytes();
         } catch (IOException e) {
-            throw new FileException(objectName);
+            throw new FileUploadException(objectName);
         }
         service.create(objectName, content);
 

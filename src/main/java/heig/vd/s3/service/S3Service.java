@@ -141,15 +141,14 @@ public class S3Service {
     private void createObject(String objectName, byte[] contentFile) {
 
         if(!exist()) {
-            throw new BucketDoesntExistException(getBucketName());
+            createBucket(bucketName);
         }
 
         if(exist(objectName)) {
-            throw new ObjectNotFoundException(objectName);
+            throw new ObjectAlreadyExistException(objectName);
         }
 
         try{
-
             PutObjectRequest poReq = PutObjectRequest
                     .builder()
                     .bucket(bucketName)
@@ -157,7 +156,6 @@ public class S3Service {
                     .build();
 
             repository.create(poReq, contentFile);
-
         } catch (S3Exception e) {
             throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
         }
@@ -277,5 +275,45 @@ public class S3Service {
         }
 
         return data;
+    }
+
+    private void createBucket(String bucketName){
+
+            if(exist()){
+                throw BucketAlreadyExistsException.create("Le bucket existe déjà : " + bucketName, new Throwable());
+            }
+
+            CreateBucketRequest bucketRequest = CreateBucketRequest
+                    .builder()
+                    .bucket(bucketName)
+                    .build();
+            try{
+                repository.createBucket(bucketRequest);
+            } catch (S3Exception e) {
+                throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
+            }
+    }
+
+    private void deleteBucket(String bucketName) {
+
+        if(!exist()){
+            throw new BucketDoesntExistException(bucketName);
+        }
+
+        try {
+            ListObjectsV2Request listObjectsV2Request = ListObjectsV2Request.builder()
+                    .bucket(bucketName)
+                    .build();
+            repository.deleteRecursiveObjects(listObjectsV2Request);
+
+            DeleteBucketRequest deleteBucketRequest = DeleteBucketRequest.builder()
+                    .bucket(bucketName)
+                    .build();
+
+            repository.deleteBucket(deleteBucketRequest);
+
+        } catch (S3Exception e) {
+            throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
+        }
     }
 }

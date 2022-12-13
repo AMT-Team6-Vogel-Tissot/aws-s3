@@ -85,4 +85,26 @@ public class S3Repository {
     public ResponseBytes<GetObjectResponse> getObjectAsBytes(GetObjectRequest getObjectRequest) {
         return cloudClient.getObjectAsBytes(getObjectRequest);
     }
+
+    public void createBucket(CreateBucketRequest cBucketReq){
+        cloudClient.createBucket(cBucketReq);
+    }
+
+    public void deleteRecursiveObjects(ListObjectsV2Request listObjectsV2Request ){
+        ListObjectsV2Response listObjectsV2Response;
+        do {
+            listObjectsV2Response = cloudClient.listObjectsV2(listObjectsV2Request);
+            for (S3Object s3Object : listObjectsV2Response.contents()) {
+                DeleteObjectRequest request = DeleteObjectRequest.builder()
+                        .bucket(bucket)
+                        .key(s3Object.key())
+                        .build();
+                cloudClient.deleteObject(request);
+            }
+        } while (listObjectsV2Response.isTruncated());
+    }
+
+    public void deleteBucket(DeleteBucketRequest dBucketReq){
+        cloudClient.deleteBucket(dBucketReq);
+    }
 }

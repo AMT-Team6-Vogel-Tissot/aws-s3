@@ -22,7 +22,6 @@ public class S3ControllerAdvice {
     @ExceptionHandler(ObjectNotFoundException.class)
     @ResponseStatus(HttpStatus.NOT_FOUND)
     public ErrorMessage imageNotFound(ObjectNotFoundException e){
-
         return new ErrorMessage(HttpStatus.NOT_FOUND.value(), new Date(), e.getMessage());
     }
 
@@ -30,9 +29,14 @@ public class S3ControllerAdvice {
     @ExceptionHandler(ObjectAlreadyExistException.class)
     @ResponseStatus(HttpStatus.CONFLICT)
     public ErrorMessage imageAlreadyExist(ObjectAlreadyExistException e){
-
         return new ErrorMessage(HttpStatus.CONFLICT.value(), new Date(), e.getMessage());
     }
 
+    @ResponseBody
+    @ExceptionHandler(FileUploadException.class)
+    @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
+    public ErrorMessage fileUpload(FileUploadException e){
+        return new ErrorMessage(HttpStatus.INTERNAL_SERVER_ERROR.value(), new Date(), e.getMessage());
+    }
 
 }

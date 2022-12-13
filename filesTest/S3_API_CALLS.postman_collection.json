@@ -1,6 +1,6 @@
 {
 	"info": {
-		"_postman_id": "ab1911e3-f4e4-4a2e-94df-47585fd9a642",
+		"_postman_id": "142dab4a-3a2b-4b22-9e26-db174bc659ba",
 		"name": "S3_API_CALLS",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
 	},
@@ -41,7 +41,7 @@
 						{
 							"key": "file",
 							"type": "file",
-							"src": "/C:/AMT/Labos/aws-s3/filesTest/file1.jpg"
+							"src": "/D:/AMT/aws-s3/filesTest/file2.jpg"
 						}
 					],
 					"options": {
@@ -51,7 +51,7 @@
 					}
 				},
 				"url": {
-					"raw": "localhost:8080/objet?objectName=testFile2",
+					"raw": "localhost:8080/objet?objectName=testFile",
 					"host": [
 						"localhost"
 					],
@@ -62,7 +62,7 @@
 					"query": [
 						{
 							"key": "objectName",
-							"value": "testFile2"
+							"value": "testFile"
 						}
 					]
 				}
@@ -156,8 +156,67 @@
 				"method": "PUT",
 				"header": [],
 				"body": {
-					"mode": "raw",
-					"raw": ""
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "objectName",
+							"value": "testFile2",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/D:/AMT/aws-s3/filesTest/file2.jpg"
+						},
+						{
+							"key": "objectNewName",
+							"value": "",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/objet",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateObject2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "objectName",
+							"value": "testFile",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/D:/AMT/aws-s3/filesTest/file1.jpg"
+						},
+						{
+							"key": "objectNewName",
+							"value": "testFile2",
+							"type": "default"
+						}
+					]
 				},
 				"url": {
 					"raw": "localhost:8080/objet",
