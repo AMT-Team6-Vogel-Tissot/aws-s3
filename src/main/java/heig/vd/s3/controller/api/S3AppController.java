@@ -1,6 +1,5 @@
 package heig.vd.s3.controller.api;
 
-import heig.vd.s3.controller.request.UpdateAppRequest;
 import heig.vd.s3.exception.FileException;
 import heig.vd.s3.service.S3Service;
 import jakarta.validation.constraints.NotBlank;
@@ -8,7 +7,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import jakarta.validation.Valid;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
@@ -64,25 +62,31 @@ public class S3AppController {
     }
 
     @PutMapping(value = "/objet", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> updateObject(@Valid @RequestBody UpdateAppRequest updateAppRequest) {
+    public ResponseEntity<Object> updateObject(@NotBlank @RequestParam String objectName, @NotBlank @RequestParam MultipartFile file, @RequestParam String objectNewName) {
 
-        if(updateAppRequest.getNewObjectName().isBlank()){
-            service.update(updateAppRequest.getObjectName(), updateAppRequest.getContentFile().getBytes());
-        } else {
-            service.update(updateAppRequest.getObjectName(), updateAppRequest.getContentFile().getBytes(), updateAppRequest.getNewObjectName());
+        byte[] content;
+        try{
+            content = file.getBytes();
+        } catch (IOException e) {
+            throw new FileException(objectName);
         }
 
-        return new ResponseEntity<>(updateAppRequest, HttpStatus.OK);
+        if(objectNewName.isBlank()){
+            service.update(objectName, content);
+        } else {
+            service.update(objectName, content, objectNewName);
+        }
+
+        return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
-    //TODO Voir comment renvoyer un objet en json (ResponseEntity en json, pas obligé mais mieux)
     //TODO Faire la création/destruction du bucket
     @PostMapping(value = "/objet", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createObject(@NotBlank @RequestParam String objectName, @NotBlank @RequestParam MultipartFile file) {
         byte[] content;
         try{
            content = file.getBytes();
-        } catch (IOException e){
+        } catch (IOException e) {
             throw new FileException(objectName);
         }
         service.create(objectName, content);
