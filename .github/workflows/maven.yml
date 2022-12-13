@@ -5,6 +5,13 @@ on:
       - '**'
 
 
+env:
+  AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+  AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+  REGION: ${{ secrets.REGION }}
+  BUCKET: ${{ secrets.BUCKET }}
+  URL_DURATION: 10
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -18,21 +25,9 @@ jobs:
           distribution: 'corretto'
           cache: maven
       - name: Build
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-          REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-          BUCKET: ${{ secrets.BUCKET }}
-          URL_DURATION: 10
         run: mvn package
   test:
     runs-on: ubuntu-latest
-    env:
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_KEY }}
-      REGION: ${{ secrets.AWS_DEFAULT_REGION }}
-      BUCKET: ${{ secrets.BUCKET }}
-      URL_DURATION: 10
     steps:
       #clone the repo
       - name: Checkout repository
