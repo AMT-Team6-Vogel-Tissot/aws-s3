@@ -22,17 +22,17 @@ public class S3AppController {
     }
 
     @GetMapping(value = "/objet/publie", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> urlObject(@RequestParam @NotBlank String name) {
+    public ResponseEntity<Object> urlObject(@RequestParam @NotBlank String nom) {
 
-        URL url = service.publish(name);
+        URL url = service.publish(nom);
 
         return new ResponseEntity<>(url, HttpStatus.OK);
     }
 
     @GetMapping(value = "/objet/existe", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> doesObjectExist(@RequestParam @NotBlank String name) {
+    public ResponseEntity<Object> doesObjectExist(@RequestParam @NotBlank String nom) {
 
-        boolean response = service.exist(name);
+        boolean response = service.exist(nom);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
@@ -45,18 +45,18 @@ public class S3AppController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @GetMapping(value = "/objet/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> getObject(@NotBlank @PathVariable String name) {
+    @GetMapping(value = "/objet/{nom}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> getObject(@NotBlank @PathVariable String nom) {
 
-        byte[] response = service.get(name);
+        byte[] response = service.get(nom);
 
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
-    @DeleteMapping(value = "/objet/{name}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Object> deleteObject(@NotBlank @PathVariable String name) {
+    @DeleteMapping(value = "/objet/{nom}", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<Object> deleteObject(@NotBlank @PathVariable String nom) {
 
-        service.delete(name);
+        service.delete(nom);
 
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }

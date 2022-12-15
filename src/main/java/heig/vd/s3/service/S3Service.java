@@ -273,7 +273,7 @@ public class S3Service implements IDataObjectHelper {
 
             data = objectBytes.asByteArray();
         } catch (S3Exception e) {
-            throw new ObjectNotFoundException("L'objet spécifié n'existe pas : " + objectName);
+            throw new RuntimeException("S3 a refusé de traiter la requête : " + e.getMessage());
         }
 
         return data;
