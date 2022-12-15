@@ -1,6 +1,6 @@
 package heig.vd.s3.service;
 
-import heig.vd.s3.interfaces.IDataObjectHelper;
+import heig.vd.s3.service.interfaces.IDataObjectHelper;
 import heig.vd.s3.exception.BucketDoesntExistException;
 import heig.vd.s3.exception.ObjectAlreadyExistException;
 import heig.vd.s3.exception.ObjectNotFoundException;
