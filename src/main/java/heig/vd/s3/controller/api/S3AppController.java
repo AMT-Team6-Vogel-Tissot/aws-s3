@@ -61,7 +61,7 @@ public class S3AppController {
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
-    @PutMapping(value = "/objet", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PatchMapping(value = "/objet", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateObject(@NotBlank @RequestParam String objectName, @NotBlank @RequestParam MultipartFile file, @RequestParam String objectNewName) {
 
         byte[] content;
@@ -80,7 +80,6 @@ public class S3AppController {
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
-    //TODO Faire la création/destruction du bucket
     @PostMapping(value = "/objet", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createObject(@NotBlank @RequestParam String objectName, @NotBlank @RequestParam MultipartFile file) {
         byte[] content;
