@@ -134,7 +134,7 @@ public class S3Service implements IDataObjectHelper {
                 str.append(myValue.key()).append("\n");
             }
         } catch (S3Exception e) {
-            throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
+            throw new RuntimeException("S3 a refusé de traiter la requête : " + e.getMessage());
         }
 
         return str.toString();
@@ -159,7 +159,7 @@ public class S3Service implements IDataObjectHelper {
 
             repository.create(poReq, contentFile);
         } catch (S3Exception e) {
-            throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
+            throw new RuntimeException("S3 a refusé de traiter la requête : " + e.getMessage());
         }
 
     }
@@ -190,7 +190,7 @@ public class S3Service implements IDataObjectHelper {
 
             url = repository.getURLObject(goPreReq);
         } catch (S3Exception e) {
-            throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
+            throw new RuntimeException("S3 a refusé de traiter la requête : " + e.getMessage());
         }
 
 
@@ -215,7 +215,7 @@ public class S3Service implements IDataObjectHelper {
 
             repository.delete(deleteObjectRequest);
         } catch (S3Exception e) {
-            throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
+            throw new RuntimeException("S3 a refusé de traiter la requête : " + e.getMessage());
         }
     }
 
@@ -292,7 +292,7 @@ public class S3Service implements IDataObjectHelper {
             try{
                 repository.createBucket(bucketRequest);
             } catch (S3Exception e) {
-                throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
+                throw new RuntimeException("S3 a refusé de traiter la requête : " + e.getMessage());
             }
     }
 
@@ -315,7 +315,7 @@ public class S3Service implements IDataObjectHelper {
             repository.deleteBucket(deleteBucketRequest);
 
         } catch (S3Exception e) {
-            throw new RuntimeException("S3 à refusé de traiter la requête : " + e.getMessage());
+            throw new RuntimeException("S3 a refusé de traiter la requête : " + e.getMessage());
         }
     }
 }
