@@ -1,0 +1,235 @@
+{
+	"info": {
+		"_postman_id": "142dab4a-3a2b-4b22-9e26-db174bc659ba",
+		"name": "S3_API_CALLS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "publishObject",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/objet/publie?name=testFile",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objet",
+						"publie"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "testFile"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "createObject",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/D:/AMT/aws-s3/filesTest/file2.jpg"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/objet?objectName=testFile",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objet"
+					],
+					"query": [
+						{
+							"key": "objectName",
+							"value": "testFile"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "existeObject",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/objet/existe?name=testFile",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objet",
+						"existe"
+					],
+					"query": [
+						{
+							"key": "name",
+							"value": "testFile"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "listObjects",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/objets",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objets"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getObject",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/objet/testFile",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objet",
+						"testFile"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "deleteObject",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "localhost:8080/objet/testFile2",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objet",
+						"testFile2"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateObject",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "objectName",
+							"value": "testFile2",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/D:/AMT/aws-s3/filesTest/file2.jpg"
+						},
+						{
+							"key": "objectNewName",
+							"value": "",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "localhost:8080/objet",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objet"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "updateObject2",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "objectName",
+							"value": "testFile",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": "/D:/AMT/aws-s3/filesTest/file1.jpg"
+						},
+						{
+							"key": "objectNewName",
+							"value": "testFile2",
+							"type": "default"
+						}
+					]
+				},
+				"url": {
+					"raw": "localhost:8080/objet",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"objet"
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
