@@ -12,6 +12,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.net.URL;
 
+// TODO /objet devrait être au pluriel partout, c'est perturbant d'avoir à la fois /objet et /objets. Utilisez un selecteur (id, ou nom dans votre exemple) à la place de /objet pour accéder à un objet en particulier.
 @RestController
 public class S3AppController {
 
@@ -21,6 +22,7 @@ public class S3AppController {
         service = new S3Service();
     }
 
+    // TODO pluriel + selecteur {nom}
     @GetMapping(value = "/objet/publie", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> urlObject(@RequestParam @NotBlank String nom) {
 
@@ -29,6 +31,7 @@ public class S3AppController {
         return new ResponseEntity<>(url, HttpStatus.OK);
     }
 
+    // pluriel + selecteur {nom}
     @GetMapping(value = "/objet/existe", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> doesObjectExist(@RequestParam @NotBlank String nom) {
 
@@ -45,6 +48,7 @@ public class S3AppController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // TODO manque pluriel
     @GetMapping(value = "/objet/{nom}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> getObject(@NotBlank @PathVariable String nom) {
 
@@ -53,6 +57,7 @@ public class S3AppController {
         return new ResponseEntity<>(response, HttpStatus.OK);
     }
 
+    // TODO manque pluriel
     @DeleteMapping(value = "/objet/{nom}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> deleteObject(@NotBlank @PathVariable String nom) {
 
@@ -61,6 +66,7 @@ public class S3AppController {
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
+    // TODO manque pluriel + selecteur (nom)
     @PatchMapping(value = "/objet", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> updateObject(@NotBlank @RequestParam String objectName, @NotBlank @RequestParam MultipartFile file, @RequestParam String objectNewName) {
 
@@ -80,6 +86,7 @@ public class S3AppController {
         return new ResponseEntity<>("Success", HttpStatus.OK);
     }
 
+    // TODO manque pluriel
     @PostMapping(value = "/objet", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Object> createObject(@NotBlank @RequestParam String objectName, @NotBlank @RequestParam MultipartFile file) {
         byte[] content;
