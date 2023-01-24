@@ -17,6 +17,7 @@ import software.amazon.awssdk.services.s3.presigner.model.PresignedGetObjectRequ
 import java.net.URL;
 import java.util.Objects;
 
+// Bravo d'avoir osé une approche différente de la majorité des groupes ! Si je peux me permettre un conseil c'est de faire une interface pour votre repository. Cela vous permet de swap la technologie de stockage derrière sans changement ailleurs dans l'app !
 @Repository
 public class S3Repository {
 
